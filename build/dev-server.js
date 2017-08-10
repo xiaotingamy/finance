@@ -35,6 +35,15 @@ apiRoutes.get('/getBanners', function (req, res) {
   })
 })
 
+apiRoutes.get('/getRecommends', function (req, res) {
+  const url = 'https://www.jiayuanbank.com/product/list/1'
+  axios.get(url).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+
 app.use('/api', apiRoutes)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {

@@ -49,7 +49,10 @@
 
       window.addEventListener('resize', () => {
         if (!this.slider) {
-          return
+          if (!this.slider || !this.slider.enabled) {
+            return
+          }
+          clearTimeout(this.resizeTimer)
         }
         clearTimeout(this.resizeTimer)
         this.resizeTimer = setTimeout(() => {
@@ -65,20 +68,34 @@
       })
     },
     activated() {
+      this.slider.enable()
+      let pageIndex = this.slider.getCurrentPage().pageX
+      if (pageIndex > this.dots.length) {
+        pageIndex = pageIndex % this.dots.length
+      }
+      this.slider.goToPage(pageIndex, 0, 0)
+      if (this.loop) {
+        pageIndex -= 1
+      }
+      this.currentPageIndex = pageIndex
       if (this.autoPlay) {
         this._play()
       }
     },
     deactivated() {
+      this.slider.disable()
       clearTimeout(this.timer)
     },
     beforeDestroy() {
+      this.slider.disable()
       clearTimeout(this.timer)
     },
     methods: {
       refresh() {
-        this._setSliderWidth(true)
-        this.slider.refresh()
+        if (this.slider) {
+          this._setSliderWidth(true)
+          this.slider.refresh()
+        }
       },
       _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children
@@ -136,10 +153,7 @@
         this.dots = new Array(this.children.length)
       },
       _play() {
-        let pageIndex = this.currentPageIndex + 1
-        if (this.loop) {
-          pageIndex += 1
-        }
+        let pageIndex = this.slider.getCurrentPage().pageX + 1
         clearTimeout(this.timer)
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, 400)
@@ -148,6 +162,7 @@
     }
   }
 </script>
+
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
