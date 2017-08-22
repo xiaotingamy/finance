@@ -37,7 +37,7 @@
         <div class="recommends">
             <h1 class="title"><span class="lnr lnr-star"></span>定期</h1>
             <div class="recommends-list border-top-1px">
-              <router-link tag="div" class="recommend-item border-bottom-1px" to="/financial" v-for="item in recommends" :key="item.id">
+              <div class="recommend-item border-bottom-1px" v-for="item in recommends" :key="item.id" @click="selectItem(item)">
                 <div class="recommend-title border-bottom-1px">{{item.name}}</div>
                 <div class="recommend-content">
                   <div class="content-left">
@@ -54,17 +54,22 @@
                     </div>
                   </div>
                 </div>
-              </router-link>
+              </div>
             </div>
         </div>
       </div>
+      <div class="loading-container" v-show="!recommends.length">
+        <loading></loading>
+      </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
   import Slider from 'base/slider/slider'
+  import Loading from 'base/loading/loading'
   import ProgressBar from 'base/progress-bar/progress-bar'
   import {getBanners, getRecommends} from 'api/financial'
   import {ERR_OK} from 'common/js/config'
@@ -94,6 +99,11 @@
         }
         return percent
       },
+      selectItem(item) {
+        this.$router.push({
+          path: `/financial/${item.id}`
+        })
+      },
       _getBanners() {
         getBanners().then((res) => {
           if (res.code === ERR_OK) {
@@ -121,7 +131,8 @@
     components: {
       Scroll,
       Slider,
-      ProgressBar
+      ProgressBar,
+      Loading
     }
   }
 </script>
@@ -174,7 +185,7 @@
             border-bottom-1px($color-border)
             .mark
               font-size: $font-size-small
-              color: #ff5467
+              color: $color-theme
           .piggybank-content
             display: flex
             height: 87px
@@ -266,6 +277,4 @@
                   .progress-bar-wrapper
                     display inline-block
                     vertical-align middle
-
-
 </style>
