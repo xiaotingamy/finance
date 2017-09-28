@@ -2,7 +2,7 @@
   <div class="header">
     <div class="inner border-bottom-1px">
       <p class="title">{{title}}</p>
-      <div class="back">
+      <div class="back" @click.stop="linkTo(backUrl)">
         <div class="extend">
           <span class="lnr lnr-chevron-left"></span>
         </div>
@@ -18,6 +18,21 @@
       title: {
         type: String,
         default: '微银理财'
+      },
+      backUrl: {
+        type: String,
+        default: ''
+      }
+    },
+    methods: {
+      linkTo(backUrl) {
+        if (backUrl) {
+          this.$router.push({
+            path: backUrl
+          })
+        } else {
+          this.$router.go(-1)
+        }
       }
     }
   }

@@ -1,1 +1,1 @@
-export const productDetail = state => state.productDetail
+export const productDescription = state => state.productDescription

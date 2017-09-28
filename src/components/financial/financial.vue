@@ -2,7 +2,7 @@
   <div class="financial">
     <scroll :data="recommends" ref="scroll" class="financial-content">
       <div>
-        <div  v-if="banners.length" class="slider-wrapper">
+        <div v-if="banners.length" class="slider-wrapper">
           <div class="slider-content">
             <slider ref="slider">
               <div v-for="item in banners">
@@ -18,7 +18,7 @@
           <div class="piggybank border-top-1px border-bottom-1px">
             <div class="piggybank-title border-bottom-1px">
               <p>储银罐</p>
-              <p class="mark">灵活高效，年化随存放周期而涨</p>
+              <p class="mark">年化随存放周期同步增长</p>
             </div>
             <div class="piggybank-content border-bottom-1px">
               <div class="content-left">
@@ -26,43 +26,49 @@
                 <p class="rate-desc">预期年化收益</p>
               </div>
               <div class="content-right">
-                <div class="rule-desc"><p>随存随取</p><p class="s-row">1元起投</p></div>
+                <div class="rule-desc"><p>灵活存取</p>
+                  <p class="s-row">1元起投</p></div>
               </div>
             </div>
             <div class="piggybank-bottom">
-              <p>*储银罐是微银理财推出的随时随取的活期理财产品</p>
+              <p>*储银罐是微银理财推出的灵活存取的活期理财产品</p>
             </div>
           </div>
         </div>
         <div class="recommends">
-            <h1 class="title"><span class="lnr lnr-star"></span>定期</h1>
-            <div class="recommends-list border-top-1px">
-              <div class="recommend-item border-bottom-1px" v-for="item in recommends" :key="item.id" @click="selectItem(item)">
-                <div class="recommend-title border-bottom-1px">{{item.name}}</div>
-                <div class="recommend-content">
-                  <div class="content-left">
-                    <p class="c-rate">{{item.yearIncome}}<span class="percent">%</span><span class="increase-interest" v-if="item.increaseInterest">+{{item.increaseInterest}}<i class="percent">%</i></span></p>
-                    <p class="rate-desc">预期年化收益</p>
-                  </div>
-                  <div class="content-right">
-                    <p class="period">期限 {{item.financePeriod}} 天</p>
-                    <div class="soldout">
-                      <p>已售{{calculatePercent(item.actualAmount, item.totalAmount)}}%</p>
-                      <div class="progress-bar-wrapper">
-                        <progress-bar :percent="calculatePercent(item.actualAmount, item.totalAmount)"></progress-bar>
-                      </div>
+          <h1 class="title"><span class="lnr lnr-star"></span>定期</h1>
+          <div class="recommends-list border-top-1px">
+            <div class="recommend-item border-bottom-1px" v-for="item in recommends" :key="item.id"
+                 @click="selectItem(item)">
+              <div class="recommend-title border-bottom-1px">{{item.name}}</div>
+              <div class="recommend-content">
+                <div class="content-left">
+                  <p class="c-rate">{{item.yearIncome}}<span class="percent">%</span><span class="increase-interest"
+                                                                                           v-if="item.increaseInterest">+{{item.increaseInterest}}<i
+                    class="percent">%</i></span></p>
+                  <p class="rate-desc">预期年化收益</p>
+                </div>
+                <div class="content-right">
+                  <p class="period">期限 {{item.financePeriod}} 天</p>
+                  <div class="soldout">
+                    <p>已售{{calculatePercent(item.actualAmount, item.totalAmount)}}%</p>
+                    <div class="progress-bar-wrapper">
+                      <progress-bar :percent="calculatePercent(item.actualAmount, item.totalAmount)"></progress-bar>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <div class="loading-container" v-show="!recommends.length">
         <loading></loading>
       </div>
     </scroll>
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -72,7 +78,7 @@
   import Loading from 'base/loading/loading'
   import ProgressBar from 'base/progress-bar/progress-bar'
   import {getBanners, getRecommends} from 'api/financial'
-  import {ERR_OK} from 'common/js/config'
+  import {ERR_OK} from 'api/config'
   export default {
     data() {
       return {
@@ -84,7 +90,7 @@
       this._getBanners()
       this._getRecommends()
     },
-    activated () {
+    activated() {
       setTimeout(() => {
         this.$refs.slider && this.$refs.slider.refresh()
       }, 20)
@@ -163,7 +169,7 @@
           height: 100%
       .fixed-deposit
         .title
-          height:42px
+          height: 42px
           line-height: 42px
           padding-left: 15px
           font-size: $font-size-medium
@@ -203,7 +209,6 @@
                 color: $color-text-l
                 margin-top: 8px
 
-
             .content-right
               .rule-desc
                 font-size: $font-size-medium-x
@@ -220,7 +225,7 @@
 
       .recommends
         .title
-          height:42px
+          height: 42px
           line-height: 42px
           padding-left: 15px
           font-size: $font-size-medium

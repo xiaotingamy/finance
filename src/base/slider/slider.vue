@@ -48,11 +48,8 @@
       }, 20)
 
       window.addEventListener('resize', () => {
-        if (!this.slider) {
-          if (!this.slider || !this.slider.enabled) {
-            return
-          }
-          clearTimeout(this.resizeTimer)
+        if (!this.slider || !this.slider.enabled) {
+          return
         }
         clearTimeout(this.resizeTimer)
         this.resizeTimer = setTimeout(() => {
@@ -119,10 +116,11 @@
           scrollX: true,
           scrollY: false,
           momentum: false,
-          snap: true,
-          snapLoop: this.loop,
-          snapThreshold: 0.3,
-          snapSpeed: 400
+          snap: {
+            loop: this.loop,
+            threshold: 0.3,
+            speed: 400
+          }
         })
 
         this.slider.on('scrollEnd', this._onScrollEnd)
@@ -162,8 +160,6 @@
     }
   }
 </script>
-
-
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   .slider

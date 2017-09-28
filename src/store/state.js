@@ -1,5 +1,6 @@
+
 const state = {
-  productDetail: {}
+  productDescription: {}
 }
 
 export default state
