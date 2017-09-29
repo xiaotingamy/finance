@@ -2,7 +2,7 @@
   <div class="description-wrapper">
     <div class="description-content">
       <split></split>
-      <panel :title="productDescription.title" :text="productDescription.text"></panel>
+      <panel title="产品说明" :text="productDescription.productDesc"></panel>
     </div>
   </div>
 </template>
@@ -19,8 +19,8 @@
     },
     methods: {
       _getDesc () {
-        if (!this.productDescription.title) {
-          this.$router.push(`/financial/${this.productDescription.productId}`)
+        if (!this.productDescription.productId) {
+          this.$router.push('/')
           return
         }
       }

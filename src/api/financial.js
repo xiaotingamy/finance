@@ -12,3 +12,9 @@ export function getRecommends() {
     return Promise.resolve(res.data)
   })
 }
+export function getProductList() {
+  const url = '/api/getProductList'
+  return axios.get(url).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}

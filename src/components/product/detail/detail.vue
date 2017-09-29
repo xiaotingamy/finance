@@ -1,94 +1,116 @@
 <template>
-  <div class="product">
-    <m-header></m-header>
-    <scroll ref="scroll" class="product-detail-wrapper">
-      <div class="product-detail-content">
-        <div class="head border-bottom-1px">
-          <div class="income-data">
-            <span class="data">9.6</span>
-            <span class="util">%</span>
-            <span class="increase-income">+2%</span>
-          </div>
-          <div class="income-title">预期年化收益率</div>
-          <div class="activity-mark">
-            <span>尾返</span>
-          </div>
-          <div class="limit-box">
-            <div class="period">
-              <p>60天</p>
-              <p>投资期限</p>
+  <transition name="slide">
+    <div class="product" v-if="product.id">
+      <m-header :title="product.name"></m-header>
+      <scroll ref="scroll" class="product-detail-wrapper">
+        <div class="product-detail-content">
+          <div class="head border-bottom-1px">
+            <div class="income-data">
+              <span class="data">{{product.yearIncome}}</span>
+              <span class="util">%</span>
+              <span class="increase-income" v-if="product.increaseInterest">+{{product.increaseInterest}}%</span>
             </div>
-            <div class="middle-line"></div>
-            <div class="lowest-amount">
-              <p>1000元</p>
-              <p>起投金额</p>
+            <div class="income-title">预期年化收益率</div>
+            <div class="activity-mark" v-if="product.bonus != null && product.bonus.id > 0 && product.bonus.description != ''">
+              <span>{{product.bonus.description}}</span>
             </div>
-          </div>
-        </div>
-        <div class="secondary border-bottom-1px">
-          <div class="progress-box">
-            <progress-bar-inner percent=30></progress-bar-inner>
-          </div>
-          <div class="amount-box">
-            <p>募集金额：100000元</p>
-            <p>剩余金额：<span class="red">6000</span>元</p>
-          </div>
-          <div class="remark">
-            还款方式：到期次日本息一次性返还至您的账户余额
-          </div>
-        </div>
-        <split></split>
-        <div class="activity-wrapper border-bottom-1px">
-          <ul class="content">
-            <li>
-              <div class="icon icon-first"></div>
-              <p class="text">首单可随机获得100-300个嘉银币</p>
-            </li>
-            <li>
-              <div class="icon icon-last"></div>
-              <p class="text">尾单可随机获得投资金额*10%的嘉银币</p>
-            </li>
-            <li>
-              <div class="icon icon-back"></div>
-              <div class="text">
-                <p>单笔投资满1返2元红包</p>
+            <div class="limit-box">
+              <div class="period">
+                <p>{{product.financePeriod}}天</p>
+                <p>投资期限</p>
               </div>
+              <div class="middle-line"></div>
+              <div class="lowest-amount">
+                <p>{{product.lowestAmount}}元</p>
+                <p>起投金额</p>
+              </div>
+            </div>
+          </div>
+          <div class="secondary border-bottom-1px">
+            <div class="progress-box">
+              <progress-bar-inner :percent="calculatePercent(product.actualAmount, product.totalAmount)"></progress-bar-inner>
+            </div>
+            <div class="amount-box">
+              <p>募集金额：{{product.totalAmount}}元</p>
+              <p>剩余金额：<span class="red">{{product.totalAmount - product.actualAmount}}</span>元</p>
+            </div>
+            <div class="remark" v-if="product.category.property === 'NOVICE'">
+              购买说明：仅限新用户，限购一次，最高金额{{product.highestAmount}}元
+            </div>
+            <div class="remark">
+              还款方式：到期次日本息一次性返还至您的账户余额
+            </div>
+          </div>
+          <split v-if="product.bonus != null && product.bonus.id > 0"></split>
+          <div class="activity-wrapper border-bottom-1px" v-if="product.bonus != null && product.bonus.id > 0">
+            <ul class="content">
+              <li v-if="product.bonus.firstOrder != null && product.bonus.firstOrder != ''">
+                <div class="icon icon-first"></div>
+                <p class="text">首单可随机获得{{product.bonus.firstOrder}}个嘉银币</p>
+              </li>
+              <li v-if="product.bonus.lastOrder > 0">
+                <div class="icon icon-last"></div>
+                <p class="text">尾单可随机获得投资金额*{{product.bonus.lastOrder}}%的嘉银币</p>
+              </li>
+              <li v-if="product.bonus.bonusType > 0">
+                <div class="icon icon-back"></div>
+                <div class="text">
+                  <p>{{backDesc(product.bonus)}}</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <split></split>
+          <div class="time-line border-bottom-1px">
+            <div class="block">
+              <div class="icon-start"></div>
+              <p class="title">起息时间</p>
+              <p class="time">2017-09-12</p>
+            </div>
+            <div class="line-to"></div>
+            <div class="block">
+              <div class="icon-stay"></div>
+              <p class="title">到期时间</p>
+              <p class="time">2018-03-11</p>
+            </div>
+            <div class="line-to"></div>
+            <div class="block">
+              <div class="icon-end"></div>
+              <p class="title">到账时间</p>
+              <p class="time">2018-03-11</p>
+            </div>
+          </div>
+          <split></split>
+          <ul class="list-link">
+            <li class="border-bottom-1px" @click="toDescription(product.description)">
+              <h4>产品详情</h4>
+              <span class="lnr lnr-chevron-right"></span>
+            </li>
+            <li class="border-bottom-1px">
+              <h4>债权信息</h4>
+              <span class="lnr lnr-chevron-right"></span>
+            </li>
+            <li class="border-bottom-1px">
+              <h4>安全保障</h4>
+              <span class="lnr lnr-chevron-right"></span>
+            </li>
+            <li class="border-bottom-1px">
+              <h4>投资记录</h4>
+              <div class="text-info">23人</div>
+              <span class="lnr lnr-chevron-right"></span>
             </li>
           </ul>
         </div>
-        <split></split>
-        <ul class="list-link">
-          <li class="border-bottom-1px" @click="toDescription(product.description)">
-            <h4>产品详情</h4>
-            <span class="lnr lnr-chevron-right"></span>
-          </li>
-          <li class="border-bottom-1px">
-            <h4>债权信息</h4>
-            <span class="lnr lnr-chevron-right"></span>
-          </li>
-          <li class="border-bottom-1px">
-            <h4>安全保障</h4>
-            <span class="lnr lnr-chevron-right"></span>
-          </li>
-          <li class="border-bottom-1px">
-            <h4>投资记录</h4>
-            <div class="text-info">23人</div>
-            <span class="lnr lnr-chevron-right"></span>
-          </li>
-        </ul>
+      </scroll>
+      <div class="product-detail-footer">
+        <div class="footer-box border-top-1px">
+          <div class="icon-calculate"></div>
+          <div class="buy" :class="{'active': buyActive}">{{buyDesc}}</div>
+        </div>
       </div>
-    </scroll>
-    <div class="product-detail-footer">
-      <div class="footer-box">
-        <div class="icon-calculate"></div>
-        <div class="buy">立即购买</div>
-        <!--<div class="buy">{{buyDesc}}</div>-->
-      </div>
-    </div>
-    <keep-alive>
       <router-view></router-view>
-    </keep-alive>
-  </div>
+    </div>
+  </transition>
 </template>
 
 <script type="text/ecmascript-6">
@@ -97,34 +119,70 @@
   import ProgressBarInner from 'components/product/progress-bar-inner/progress-bar-inner'
   import Split from 'components/split/split'
   import {getProduct} from 'api/product'
-  import {ERR_OK} from 'common/js/config'
+  import {ERR_OK} from 'api/config'
   import {mapMutations} from 'vuex'
   export default {
-    data () {
+    data() {
       return {
-        product: {
-          id: '1910',
-          description: {
-            productId: '1910',
-            title: '123',
-            text: '123456'
-          }
-        }
+        product: {}
       }
     },
     created() {
-      console.log(this.$route.params.id)
       this._getProduct()
     },
+    computed: {
+      buyActive() {
+        // 还少一个条件判断  或者还未开售的情况
+        return this.product.actualAmount < this.product.totalAmount
+      },
+      buyDesc() {
+//        考虑倒计时情况
+        return this.product.actualAmount >= this.product.totalAmount ? '已售罄' : '立即购买'
+      }
+    },
     methods: {
-      _getProduct () {
+      _getProduct() {
         getProduct(this.$route.params.id).then((res) => {
-          if (res.code === ERR_OK) {
+          if (res.errno === ERR_OK) {
             this.product = res.data
           }
         })
       },
-      toDescription (desc) {
+      calculatePercent(actual, total) {
+        var percent = ((actual / total) * 100).toFixed(2)
+        if (percent > 0 && percent < 1) {
+          percent = 1
+        } else {
+          percent = Math.floor(percent)
+        }
+        return percent
+      },
+      backDesc(bonus) {
+        var desc = ''
+        var strategy = bonus.strategies
+        if (!strategy) {
+          return
+        }
+        if (bonus.bonusType === 1) {
+          strategy.forEach((el) => {
+            var givenType = bonus.givenType
+            if (givenType === 1) {
+              desc = `单笔投资满${el.amount}返${el.givenAmount}个嘉银币`
+            }
+            if (givenType === 2) {
+              desc = `单笔投资满${el.amount}返${el.givenAmount}元红包`
+            }
+            if (givenType === 3) {
+              desc = `单笔投资满${el.amount}返${el.givenAmount / 100}加息券`
+            }
+          })
+        } else if (bonus.bonusType === 2) {
+          desc = `返${bonus.amount}元红包`
+        }
+        return desc
+      },
+      toDescription(desc) {
+        console.log(desc)
         this.$router.push({
           path: `${this.product.id}/description`
         })
@@ -154,6 +212,10 @@
     bottom: 0
     right: 0
     background: $color-background
+    &.slide-enter-active, &.slide-leave-active
+      transition all .3s
+    &.slide-enter, &.slide-leave-to
+      transform translate3d(100%, 0, 0)
     .product-detail-wrapper
       position absolute
       top 44px
@@ -220,7 +282,7 @@
                   font-size $font-size-large
                   margin-bottom 6px
         .secondary
-          padding-bottom 16px
+          padding-bottom 8px
           border-bottom-1px($color-border)
           background-color $color-background-w
           .progress-box
@@ -238,6 +300,7 @@
             padding 0 22px
             font-size $font-size-small
             color $color-text-l
+            margin-bottom 8px
         .activity-wrapper
           padding 10px 24px
           background: $color-background-w
@@ -266,6 +329,49 @@
                 font-size $font-size-small
                 color $color-text-n
                 line-height 18px
+        .time-line
+          display flex
+          justify-content space-between
+          align-items center
+          flex 0 0 auto
+          padding 0 40px
+          height 75px
+          border-bottom-1px($color-border)
+          background $color-background-w
+          .block
+            display flex
+            flex-flow column nowrap
+            align-items center
+            .icon-start
+              width 18px
+              height 18px
+              bg-image('icon-start')
+              background-size 18px
+              margin-bottom 5px
+            .icon-stay
+              width 18px
+              height 18px
+              bg-image('icon-stay')
+              background-size 18px
+              margin-bottom 5px
+            .icon-end
+              width 18px
+              height 18px
+              bg-image('icon-end')
+              background-size 18px
+              margin-bottom 5px
+            .title
+              font-size $font-size-small
+              color $color-text-n
+              margin-bottom 5px
+            .time
+              font-size $font-size-small-s
+              color $color-text-l
+          .line-to
+            height 1px
+            border-radius 50%
+            width 45px
+            background $color-border
         .list-link
           li
             display flex
@@ -292,7 +398,6 @@
       left 0
       width 100%
       height 55px
-      border-top 1px solid $color-border
       background $color-background-w
       .footer-box
         display flex
@@ -300,6 +405,7 @@
         align-items center
         padding 0 15px
         height 100%
+        border-top-1px($color-border)
         .icon-calculate
           flex 0 0 30px
           margin-right 15px

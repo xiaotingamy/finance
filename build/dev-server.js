@@ -24,6 +24,11 @@ var proxyTable = config.dev.proxyTable
 var app = express()
 var compiler = webpack(webpackConfig)
 
+//data mock
+var productListData = require('../productList.json')
+var products = productListData.products
+
+
 var apiRoutes = express.Router()
 
 apiRoutes.get('/getBanners', function (req, res) {
@@ -32,6 +37,21 @@ apiRoutes.get('/getBanners', function (req, res) {
     res.json(response.data)
   }).catch((e) => {
     console.log(e)
+  })
+})
+
+apiRoutes.get('/getProductList', function (req, res) {
+  res.json({
+    errno: 0,
+    data: products
+  })
+})
+
+apiRoutes.get('/getProduct/:id', function (req, res) {
+  var product = products.filter(product => product.id == req.params.id)
+  res.json({
+    errno: 0,
+    data: product[0]
   })
 })
 
@@ -44,16 +64,16 @@ apiRoutes.get('/getRecommends', function (req, res) {
   })
 })
 
-apiRoutes.get('/getProduct', function (req, res) {
-  const url = 'https://www.jiayuanbank.com/product/detail'
-  axios.get(url, {
-    params: req.query
-  }).then((response) => {
-    res.json(response.data)
-  }).catch((e) => {
-    console.log(e)
-  })
-})
+// apiRoutes.get('/getProduct', function (req, res) {
+//   const url = 'https://www.jiayuanbank.com/product/detail'
+//   axios.get(url, {
+//     params: req.query
+//   }).then((response) => {
+//     res.json(response.data)
+//   }).catch((e) => {
+//     console.log(e)
+//   })
+// })
 
 app.use('/api', apiRoutes)
 

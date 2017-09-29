@@ -14,17 +14,23 @@
   export default {
     props: {
       percent: {
-        type: String,
+        type: Number,
         default: 0
       }
     },
     mounted () {
-      this._offset(this.percent)
+      setTimeout(() => {
+        if (this.percent) {
+          this._offset(this.percent)
+        }
+      }, 20)
     },
     methods: {
       _offset(width) {
-        this.$refs.ratio.style.left = `${width}%`
-        this.$refs.bar.style.width = `${width}%`
+        if (this.$refs.bar && this.$refs.ratio) {
+          this.$refs.bar.style.width = `${width}%`
+          this.$refs.ratio.style.left = `${width}%`
+        }
       }
     }
   }

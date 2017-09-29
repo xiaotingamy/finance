@@ -1,6 +1,6 @@
 <template>
   <div class="financial">
-    <scroll :data="recommends" ref="scroll" class="financial-content">
+    <scroll :data="products" ref="scroll" class="financial-content">
       <div>
         <div v-if="banners.length" class="slider-wrapper">
           <div class="slider-content">
@@ -38,9 +38,20 @@
         <div class="recommends">
           <h1 class="title"><span class="lnr lnr-star"></span>定期</h1>
           <div class="recommends-list border-top-1px">
-            <div class="recommend-item border-bottom-1px" v-for="item in recommends" :key="item.id"
-                 @click="selectItem(item)">
-              <div class="recommend-title border-bottom-1px">{{item.name}}</div>
+            <div class="recommend-item border-bottom-1px" v-for="item in products" :key="item.id"
+                 @click="selectItem(item)" :class="{'grayscale': item.actualAmount >= item.totalAmount}">
+              <span class="all-out" v-if="item.actualAmount >= item.totalAmount"></span>
+              <div class="remark" v-else>
+                <div class="novice" v-if="item.category.property === 'NOVICE'"></div>
+                <div class="activity" v-if="item.category.property === 'ACTIVITY'"></div>
+                <div class="experience" v-if="item.category.property === 'EXPERIENCE'"></div>
+              </div>
+              <div class="recommend-title border-bottom-1px">
+                <div>{{item.name}}</div>
+                <div class="tag" v-if="item.bonus != null && item.bonus.id > 0 && item.bonus.description!= ''" >
+                  {{item.bonus.description}}
+                </div>
+              </div>
               <div class="recommend-content">
                 <div class="content-left">
                   <p class="c-rate">{{item.yearIncome}}<span class="percent">%</span><span class="increase-interest"
@@ -62,13 +73,11 @@
           </div>
         </div>
       </div>
-      <div class="loading-container" v-show="!recommends.length">
+      <div class="loading-container" v-show="!products.length">
         <loading></loading>
       </div>
     </scroll>
-    <keep-alive>
-      <router-view></router-view>
-    </keep-alive>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -77,18 +86,18 @@
   import Slider from 'base/slider/slider'
   import Loading from 'base/loading/loading'
   import ProgressBar from 'base/progress-bar/progress-bar'
-  import {getBanners, getRecommends} from 'api/financial'
+  import {getBanners, getProductList} from 'api/financial'
   import {ERR_OK} from 'api/config'
   export default {
     data() {
       return {
         banners: [],
-        recommends: []
+        products: []
       }
     },
     created() {
       this._getBanners()
-      this._getRecommends()
+      this._getProductList()
     },
     activated() {
       setTimeout(() => {
@@ -117,11 +126,11 @@
           }
         })
       },
-      _getRecommends() {
-        getRecommends().then((res) => {
-          if (res.pages) {
-            this.recommends = res.products.slice(0, 3)
-            console.log(this.recommends)
+      _getProductList() {
+        getProductList().then((res) => {
+          if (res.errno === ERR_OK) {
+            this.products = res.data
+//            console.log(this.products)
           }
         })
       },
@@ -133,6 +142,8 @@
           }, 20)
         }
       }
+    },
+    computed: {
     },
     components: {
       Scroll,
@@ -236,14 +247,54 @@
           background: $color-background-w
           border-top-1px($color-border)
           .recommend-item
+            position relative
             padding: 0 14px
             border-bottom-1px($color-border)
+            &.grayscale
+              filter grayscale(100%) opacity(40%)
+            .all-out
+              position absolute
+              top 0
+              right 0
+              width 47px
+              height 47px
+              bg-image('soldout')
+              background-size 47px
+            .remark
+              position absolute
+              top 0
+              right 0
+              .novice
+                width 47px
+                height 47px
+                bg-image('novice')
+                background-size 47px
+              .activity
+                width 47px
+                height 47px
+                bg-image('activity')
+                background-size 47px
+              .experience
+                width 47px
+                height 47px
+                bg-image('experience')
+                background-size 47px
             .recommend-title
               height: 45px
               line-height: 45px
               color: $color-text
               font-size: $font-size-medium-x
               border-bottom-1px($color-border)
+              display flex
+              align-items center
+              .tag
+                font-size $font-size-small-s
+                color $color-theme
+                line-height 18px
+                padding 0px 5px
+                border 1px solid $color-theme
+                border-radius 4px
+                margin-left 10px
             .recommend-content
               display flex
               height 80px

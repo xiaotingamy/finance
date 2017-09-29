@@ -1,0 +1,53 @@
+{
+  "msg": "成功",
+  "code": 0,
+  "data": {
+    "product": {
+      "productSource": 1,
+      "increaseInterest": 29,
+      "auth": 1,
+      "bonus": {
+        "descirption": "fan嘉银币",
+        "givenType": 1,
+        "strategies": [
+          {
+            "amount": 1,
+            "givenAmount": 10
+          },
+          {
+            "amount": 2,
+            "givenAmount": 30
+          },
+          {
+            "amount": 3,
+            "givenAmount": 50
+          }
+        ],
+        "lastOrder": 99,
+        "name": "fan嘉银币",
+        "firstOrder": "300-500",
+        "id": 187
+      },
+      "productPaybackTime": "2017-09-30",
+      "productContract": null,
+      "highestAmount": 0,
+      "id": 1933,
+      "yearIncome": 28,
+      "commonProject": null,
+      "shippedTime": "2017-08-29 15:00:00",
+      "actualAmount": 2,
+      "label": "",
+      "prodcutDueTime": "2017-09-30",
+      "totalAmount": 5,
+      "financePeriod": 30,
+      "name": "灰度测试0929",
+      "category": "COMMON",
+      "interestDate": "2017-08-31",
+      "lowestAmount": 1,
+      "borrowerNo": "BOR89"
+    },
+    "purchaseQuantity": 2,
+    "serverTime": "2017-09-29 15:26:15",
+    "right": 1
+  }
+}
