@@ -12,8 +12,10 @@
   @import "~common/stylus/mixin"
   @import "~common/stylus/variable"
   .split
+    position relative
     width:100%
     height 10px
     border-bottom-1px($color-border)
     background-color: $color-background
+    z-index 101
 </style>

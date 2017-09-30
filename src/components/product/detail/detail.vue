@@ -86,17 +86,17 @@
               <h4>产品详情</h4>
               <span class="lnr lnr-chevron-right"></span>
             </li>
-            <li class="border-bottom-1px">
+            <li class="border-bottom-1px" v-if="product.description.obligatoryRight != '' || (product.productContract != null && product.productContract.productAttachments.length > 0)" @click="toObligatoryRight(obligatoryRight)">
               <h4>债权信息</h4>
               <span class="lnr lnr-chevron-right"></span>
             </li>
-            <li class="border-bottom-1px">
+            <li class="border-bottom-1px" @click="toSecurity()">
               <h4>安全保障</h4>
               <span class="lnr lnr-chevron-right"></span>
             </li>
-            <li class="border-bottom-1px">
+            <li class="border-bottom-1px" @click="toTradeDetail()">
               <h4>投资记录</h4>
-              <div class="text-info">23人</div>
+              <!--<div class="text-info">23人</div>-->
               <span class="lnr lnr-chevron-right"></span>
             </li>
           </ul>
@@ -138,6 +138,9 @@
       buyDesc() {
 //        考虑倒计时情况
         return this.product.actualAmount >= this.product.totalAmount ? '已售罄' : '立即购买'
+      },
+      obligatoryRight() {
+        return Object.assign({}, this.product.description, this.product.productContract)
       }
     },
     methods: {
@@ -182,11 +185,26 @@
         return desc
       },
       toDescription(desc) {
-        console.log(desc)
         this.$router.push({
           path: `${this.product.id}/description`
         })
         this.setProductDescription(desc)
+      },
+      toObligatoryRight(right) {
+        this.$router.push({
+          path: `${this.product.id}/obligatoryRight`
+        })
+        this.setProductDescription(right)
+      },
+      toSecurity() {
+        this.$router.push({
+          path: `${this.product.id}/security`
+        })
+      },
+      toTradeDetail() {
+        this.$router.push({
+          path: `${this.product.id}/trade/detail`
+        })
       },
       ...mapMutations({
         setProductDescription: 'SET_PRODUCT_DESCRIPTION'

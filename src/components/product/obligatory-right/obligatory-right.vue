@@ -2,10 +2,15 @@
   <transition name="slide">
     <scroll ref="scroll" class="description-wrapper">
       <div class="description-content">
-        <split></split>
-        <panel title="产品说明" :text="productDescription.productDesc"></panel>
-        <split></split>
-        <panel title="项目说明" text="资金需求方为浙江禅文投资管理有限公司，其品牌嘉银贷是一款基于地理位置定位的社交金融产品，旨在利用平台优势，为有需求的借款人与出借人做好撮合性服务而组成的一个资产包。借款人主要为，经营良好的，有稳定收入的中小企业主；在本地有商品房，有固定资产的个人；信用记录良好，有稳定收入来源的公务员，事业单位，上市公司，外企，当地百强企业的上班族。"></panel>
+        <split v-if="productDescription.obligatoryRight != ''"></split>
+        <panel v-if="productDescription.obligatoryRight != ''" title="借款人信息" :text="productDescription.obligatoryRight"></panel>
+        <split v-if="productDescription.productContract != null && product.productContract.productAttachments.length > 0"></split>
+        <div v-if="productDescription.productContract != null && product.productContract.productAttachments.length > 0" class="panel border-bottom-1px">
+          <h4 class="border-bottom-1px">合同信息</h4>
+          <div class="text">
+            <img v-for="item in productDescription.productAttachments" :src="item.url">
+          </div>
+        </div>
       </div>
     </scroll>
   </transition>
@@ -56,4 +61,21 @@
       transition all .3s
     &.slide-enter, &.slide-leave-to
       transform translate3d(100%, 0, 0)
+  .panel
+    padding 0 15px
+    border-bottom-1px($color-border)
+    background $color-background-w
+    h4
+      height 54px
+      font-size $font-size-large
+      color $color-text
+      line-height 54px
+      border-bottom-1px($color-border)
+    .text
+      padding 15px 0
+      line-height 22px
+      font-size $font-size-medium
+      color $color-text-n
+      img
+        width 100%
 </style>

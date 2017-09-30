@@ -1,6 +1,6 @@
 <template>
-  <div class="panel">
-    <h4>{{title}}</h4>
+  <div class="panel border-bottom-1px">
+    <h4 class="border-bottom-1px">{{title}}</h4>
     <div class="text" v-html="text"></div>
   </div>
 </template>
@@ -36,5 +36,6 @@
     .text
       padding 15px 0
       line-height 22px
+      font-size $font-size-medium
       color $color-text-n
 </style>

@@ -49,6 +49,7 @@
     width 100%
     height 44px
     background: $color-background-w
+    z-index 101
     .inner
       position relative
       height 100%
@@ -67,6 +68,4 @@
             color $color-text
             font-size $font-size-large
             line-height: 44px
-
-
 </style>

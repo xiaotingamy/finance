@@ -64,6 +64,27 @@ apiRoutes.get('/getRecommends', function (req, res) {
   })
 })
 
+apiRoutes.get('/product/trade/detail', function (req, res) {
+  const url = 'https://www.jiayuanbank.com/rest/product/trade/detail'
+  axios.get(url, {
+    params: req.query
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+apiRoutes.get('/piggybank/trade/detail', function (req, res) {
+  const url = 'http://116.62.180.160:8082/rest/piggybank/trade/detail'
+  axios.get(url, {
+    params: req.query
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+
 // apiRoutes.get('/getProduct', function (req, res) {
 //   const url = 'https://www.jiayuanbank.com/product/detail'
 //   axios.get(url, {

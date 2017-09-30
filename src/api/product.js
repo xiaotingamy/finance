@@ -6,3 +6,12 @@ export function getProduct(id) {
     return Promise.resolve(res.data)
   })
 }
+
+export function getTradeDetail(tag, data) {
+  const url = `/api/${tag}/trade/detail`
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
+}
