@@ -75,7 +75,7 @@ apiRoutes.get('/product/trade/detail', function (req, res) {
   })
 })
 apiRoutes.get('/piggybank/trade/detail', function (req, res) {
-  const url = 'http://116.62.180.160:8082/rest/piggybank/trade/detail'
+  const url = 'https://www.jiayuanbank.com/rest/piggybank/trade/detail'
   axios.get(url, {
     params: req.query
   }).then((response) => {
