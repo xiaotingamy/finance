@@ -53,7 +53,7 @@
                 <p class="text">尾单可随机获得投资金额*{{product.bonus.lastOrder}}%的嘉银币</p>
               </li>
               <li v-if="product.bonus.bonusType > 0">
-                <div class="icon icon-back"></div>
+                <div class="icon icon-back" v-show="hasBackIcon"></div>
                 <div class="text">
                   <p>{{backDesc(product.bonus)}}</p>
                 </div>
@@ -104,10 +104,11 @@
       </scroll>
       <div class="product-detail-footer">
         <div class="footer-box border-top-1px">
-          <div class="icon-calculate"></div>
+          <div class="icon-calculate" @click="showCalculator"></div>
           <div class="buy" :class="{'active': buyActive}">{{buyDesc}}</div>
         </div>
       </div>
+      <calculator ref="calculator" :period="product.financePeriod" :yearIncome="income"></calculator>
       <router-view></router-view>
     </div>
   </transition>
@@ -116,6 +117,7 @@
 <script type="text/ecmascript-6">
   import MHeader from 'components/m-header/m-header'
   import Scroll from 'base/scroll/scroll'
+  import Calculator from 'components/calculator/calculator'
   import ProgressBarInner from 'components/product/progress-bar-inner/progress-bar-inner'
   import Split from 'components/split/split'
   import {getProduct} from 'api/product'
@@ -124,7 +126,8 @@
   export default {
     data() {
       return {
-        product: {}
+        product: {},
+        hasBackIcon: true
       }
     },
     created() {
@@ -136,11 +139,14 @@
         return this.product.actualAmount < this.product.totalAmount
       },
       buyDesc() {
-//        考虑倒计时情况
+//        还需考虑倒计时情况
         return this.product.actualAmount >= this.product.totalAmount ? '已售罄' : '立即购买'
       },
       obligatoryRight() {
         return Object.assign({}, this.product.description, this.product.productContract)
+      },
+      income() {
+        return this.product.yearIncome + this.product.increaseInterest
       }
     },
     methods: {
@@ -148,6 +154,7 @@
         getProduct(this.$route.params.id).then((res) => {
           if (res.errno === ERR_OK) {
             this.product = res.data
+            console.log(this.product)
           }
         })
       },
@@ -164,6 +171,7 @@
         var desc = ''
         var strategy = bonus.strategies
         if (!strategy) {
+          this.hasBackIcon = false
           return
         }
         if (bonus.bonusType === 1) {
@@ -180,6 +188,7 @@
             }
           })
         } else if (bonus.bonusType === 2) {
+          this.hasBackIcon = true
           desc = `返${bonus.amount}元红包`
         }
         return desc
@@ -206,6 +215,9 @@
           path: `${this.product.id}/trade/detail`
         })
       },
+      showCalculator() {
+        this.$refs.calculator.show()
+      },
       ...mapMutations({
         setProductDescription: 'SET_PRODUCT_DESCRIPTION'
       })
@@ -214,7 +226,8 @@
       MHeader,
       ProgressBarInner,
       Split,
-      Scroll
+      Scroll,
+      Calculator
     }
   }
 </script>
