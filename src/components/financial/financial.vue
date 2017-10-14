@@ -48,8 +48,8 @@
               </div>
               <div class="recommend-title border-bottom-1px">
                 <div>{{item.name}}</div>
-                <div class="tag" v-if="item.bonus != null && item.bonus.id > 0 && item.bonus.description!= ''" >
-                  {{item.bonus.description}}
+                <div class="tag" v-if="item.bonusDescription != null" >
+                  {{item.bonusDescription}}
                 </div>
               </div>
               <div class="recommend-content">
@@ -128,8 +128,8 @@
       },
       _getProductList() {
         getProductList().then((res) => {
-          if (res.errno === ERR_OK) {
-            this.products = res.data
+          if (res.code === ERR_OK) {
+            this.products = res.data.sellingProducts.concat(res.data.soldProducts)
 //            console.log(this.products)
           }
         })
@@ -170,7 +170,7 @@
         position: relative
         width: 100%
         height: 0
-        padding-top: 190px
+        padding-top: 225px
         overflow: hidden
         .slider-content
           position: absolute

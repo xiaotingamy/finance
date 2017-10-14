@@ -120,18 +120,20 @@
   import Calculator from 'components/calculator/calculator'
   import ProgressBarInner from 'components/product/progress-bar-inner/progress-bar-inner'
   import Split from 'components/split/split'
-  import {getProduct} from 'api/product'
+  import {getProductDetail} from 'api/product'
   import {ERR_OK} from 'api/config'
   import {mapMutations} from 'vuex'
   export default {
     data() {
       return {
         product: {},
+//        purchaseQuantity: 0,
+//        right: 0,
         hasBackIcon: true
       }
     },
     created() {
-      this._getProduct()
+      this._getProductDetail()
     },
     computed: {
       buyActive() {
@@ -150,11 +152,14 @@
       }
     },
     methods: {
-      _getProduct() {
-        getProduct(this.$route.params.id).then((res) => {
-          if (res.errno === ERR_OK) {
+      _getProductDetail() {
+        getProductDetail(this.$route.params.id).then((res) => {
+          if (res.code === ERR_OK) {
             this.product = res.data
-            console.log(this.product)
+//            this.product = res.data.product
+//            this.purchaseQuantity = res.data.purchaseQuantity
+//            this.right = res.data.right
+//            console.log(this.product)
           }
         })
       },

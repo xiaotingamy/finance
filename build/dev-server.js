@@ -12,6 +12,7 @@ var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = require('./webpack.dev.conf')
 var axios = require('axios')
+var qs = require('qs')
 
 // default port where dev server listens for incoming traffic
 var port = process.env.PORT || config.dev.port
@@ -24,14 +25,17 @@ var proxyTable = config.dev.proxyTable
 var app = express()
 var compiler = webpack(webpackConfig)
 
+var apiRoutes = express.Router()
 //data mock
 var productListData = require('../productList.json')
 var products = productListData.products
 
+var baseURL = 'https://www.jiayuanbank.com/rest'
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
-var apiRoutes = express.Router()
-
-apiRoutes.get('/getBanners', function (req, res) {
+apiRoutes.get('/banners', function (req, res) {
   const url = 'https://www.jiayuanbank.com/banners'
   axios.get(url).then((response) => {
     res.json(response.data)
@@ -40,23 +44,8 @@ apiRoutes.get('/getBanners', function (req, res) {
   })
 })
 
-apiRoutes.get('/getProductList', function (req, res) {
-  res.json({
-    errno: 0,
-    data: products
-  })
-})
-
-apiRoutes.get('/getProduct/:id', function (req, res) {
-  var product = products.filter(product => product.id == req.params.id)
-  res.json({
-    errno: 0,
-    data: product[0]
-  })
-})
-
-apiRoutes.get('/getRecommends', function (req, res) {
-  const url = 'https://www.jiayuanbank.com/product/list/1'
+apiRoutes.get('/product/list', function (req, res) {
+  const url = baseURL + '/product/list'
   axios.get(url).then((response) => {
     res.json(response.data)
   }).catch((e) => {
@@ -64,8 +53,22 @@ apiRoutes.get('/getRecommends', function (req, res) {
   })
 })
 
+apiRoutes.get('/product/detail/:id', function (req, res) {
+  var product = products.filter(product => product.id == req.params.id)
+  res.json({
+    code: 0,
+    data: product[0]
+  })
+  // const url = baseURL + '/product/detail/' + req.params.id
+  // axios.get(url).then((response) => {
+  //   res.json(response.data)
+  // }).catch((e) => {
+  //   console.log(e)
+  // })
+})
+
 apiRoutes.get('/product/trade/detail', function (req, res) {
-  const url = 'https://www.jiayuanbank.com/rest/product/trade/detail'
+  const url =  baseURL + '/product/trade/detail'
   axios.get(url, {
     params: req.query
   }).then((response) => {
@@ -74,8 +77,9 @@ apiRoutes.get('/product/trade/detail', function (req, res) {
     console.log(e)
   })
 })
+
 apiRoutes.get('/piggybank/trade/detail', function (req, res) {
-  const url = 'https://www.jiayuanbank.com/rest/piggybank/trade/detail'
+  const url =  baseURL + '/piggybank/trade/detail'
   axios.get(url, {
     params: req.query
   }).then((response) => {
@@ -85,18 +89,34 @@ apiRoutes.get('/piggybank/trade/detail', function (req, res) {
   })
 })
 
-// apiRoutes.get('/getProduct', function (req, res) {
-//   const url = 'https://www.jiayuanbank.com/product/detail'
-//   axios.get(url, {
-//     params: req.query
-//   }).then((response) => {
-//     res.json(response.data)
-//   }).catch((e) => {
-//     console.log(e)
-//   })
-// })
+apiRoutes.post('/login', function (req, res) {
+  const url = baseURL + '/login'
+  axios.post(url, qs.stringify(req.body)).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
 
-app.use('/api', apiRoutes)
+apiRoutes.post('/authorize', function (req, res) {
+  const url = baseURL + '/authorize'
+  axios.post(url, qs.stringify(req.body)).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+
+apiRoutes.post('/access/token', function (req, res) {
+  const url = baseURL + '/access/token'
+  axios.post(url, qs.stringify(req.body)).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+
+app.use('/rest', apiRoutes)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,

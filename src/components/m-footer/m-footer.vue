@@ -25,6 +25,7 @@
     bottom 0
     left 0
     width 100%
+    background $color-background
     ul
       display flex
       align-items center

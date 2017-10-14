@@ -7,6 +7,7 @@ import ProductDescription from 'components/product/description/description'
 import ProductObligatoryRight from 'components/product/obligatory-right/obligatory-right'
 import ProductSecurity from 'components/product/security/security'
 import ProductTradeDetail from 'components/product/product-trade-detail/product-trade-detail'
+import Login from 'components/login/login'
 
 Vue.use(Router)
 
@@ -40,6 +41,10 @@ export default new Router({
     {
       path: '/user',
       component: UserCenter
+    },
+    {
+      path: '/login',
+      component: Login
     }
   ]
 })
