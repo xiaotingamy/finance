@@ -1,6 +1,7 @@
 <template>
   <div class="item-input">
     <input ref="input"
+           type="tel"
            :value="value"
            @input="updateValue($event.target.value)"
            :placeholder="placeholder"

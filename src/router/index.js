@@ -1,50 +1,41 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Financial from 'components/financial/financial'
-import UserCenter from 'components/user-center/user-center'
-import ProductDetail from 'components/product/detail/detail'
-import ProductDescription from 'components/product/description/description'
-import ProductObligatoryRight from 'components/product/obligatory-right/obligatory-right'
-import ProductSecurity from 'components/product/security/security'
-import ProductTradeDetail from 'components/product/product-trade-detail/product-trade-detail'
-import Login from 'components/login/login'
+import routes from './routes'
+import store from '../store'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      redirect: '/financial'
-    },
-    {
-      path: '/financial',
-      component: Financial,
-      children: [{
-        path: ':id',
-        component: ProductDetail,
-        children: [{
-          path: 'description',
-          component: ProductDescription
-        }, {
-          path: 'obligatoryRight',
-          component: ProductObligatoryRight
-        }, {
-          path: 'security',
-          component: ProductSecurity
-        }, {
-          path: 'trade/detail',
-          component: ProductTradeDetail
-        }]
-      }]
-    },
-    {
-      path: '/user',
-      component: UserCenter
-    },
-    {
-      path: '/login',
-      component: Login
-    }
-  ]
+// 滚动条滚回顶部
+const scrollBehavior = (to, from, savedPosition) => {
+  if (savedPosition) {
+    return savedPosition
+  } else {
+    return { x: 0, y: 0 }
+  }
+}
+
+const router = new Router({
+  mode: 'history',
+  scrollBehavior,
+  routes
 })
+
+// 路由钩子
+router.beforeEach(({meta, path}, from, next) => {
+  let {requiresAuth = false} = meta
+  let isLogin = Boolean(store.state.token)
+  /*
+    访问不需要权限的 设置meta {requiresAuth: false}
+    注册也要设置成 requiresAuth: false
+  */
+  if (requiresAuth && !isLogin && path !== '/login') {
+    return next({path: '/login'})
+  }
+  // 如果登录了以后再访问reg和login 则路由到主页
+  if (isLogin && (path === '/login' || path === '/reg')) {
+    return next({path: '/'})
+  }
+  next()
+})
+
+export default router

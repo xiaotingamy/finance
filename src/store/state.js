@@ -1,9 +1,8 @@
-// import {isLoggedIn} from 'common/js/cache'
+import {isLoggedIn} from 'common/js/cache'
 
 const state = {
   productDescription: {},
-  // token: isLoggedIn() || null
-  token: ''
+  token: isLoggedIn() || null
 }
 
 export default state

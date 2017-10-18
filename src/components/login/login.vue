@@ -36,7 +36,7 @@
             </div>
             <div class="button-group">
               <div class="button log" :class="{active: isActive}" @click="handleSubmit">登录</div>
-              <div class="button register active">注册</div>
+              <router-link tag="div" to="/reg" class="button register active">注册</router-link>
             </div>
           </div>
         </div>
@@ -81,7 +81,6 @@
           cellphone: this.cellphone,
           password: md5Password
         }
-        console.log(data)
         localLogin(data).then((res) => {
           if (res.code === ERR_OK) {
             this.userLogin(res.data.access_token)
